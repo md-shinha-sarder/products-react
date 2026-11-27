@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 function Products() {
   const [products, setProducts] = useState([])
+  const [cart, setCart] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -16,39 +17,101 @@ function Products() {
       .finally(() => setLoading(false))
   }, [])
 
+  const addToCart = (product) => {
+    setCart((current) => {
+      const existing = current.find((item) => item.id === product.id)
+      if (existing) {
+        return current.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
+        )
+      }
+      return [...current, { ...product, quantity: 1 }]
+    })
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+
   return (
-    <main className="page-main products-main">
-      <section className="products-heading">
-        <div>
-          <span className="eyebrow">THE COLLECTION</span>
-          <h1>All products</h1>
+    <main className="store-page">
+      <section className="store-banner">
+        <div className="store-banner-inner">
+          <h1>Ecommerce Store</h1>
+          <p><span>Home</span> / <strong>Ecommerce Store</strong></p>
         </div>
-        {!loading && !error && <span className="product-count">{products.length} products</span>}
       </section>
 
-      {loading && <div className="status-message"><span className="loader"></span>Loading products...</div>}
-      {error && <div className="status-message error-message">{error}</div>}
+      <section className="store-content">
+        <h2 className="store-title">Ecommerce Store</h2>
 
-      {!loading && !error && (
-        <section className="product-grid" aria-label="Product list">
-          {products.map((product) => (
-            <article className="product-card" key={product.id}>
-              <div className="product-image-wrap">
-                {product.discountPercentage > 10 && <span className="sale-badge">Sale</span>}
-                <img src={product.thumbnail} alt={product.title} />
+        {loading && <div className="store-status">Loading products...</div>}
+        {error && <div className="store-status store-error">{error}</div>}
+
+        {!loading && !error && (
+          <div className="store-layout">
+            <div className="store-grid" aria-label="Product list">
+              {products.map((product) => {
+                const inCart = cart.some((item) => item.id === product.id)
+                return (
+                  <article className="template-product-card" key={product.id}>
+                    <button
+                      className="template-product-image"
+                      type="button"
+                      onClick={() => addToCart(product)}
+                      aria-label={`Add ${product.title} to cart`}
+                    >
+                      <img src={product.thumbnail} alt={product.title} />
+                    </button>
+                    <h3>{product.title}</h3>
+                    <p className="template-product-price">${product.price.toFixed(2)}</p>
+                    <button
+                      className={inCart ? 'template-add-button template-added' : 'template-add-button'}
+                      type="button"
+                      onClick={() => addToCart(product)}
+                    >
+                      {inCart ? 'Added to Cart' : 'Add to Cart'}
+                    </button>
+                  </article>
+                )
+              })}
+            </div>
+
+            <aside className="cart-panel">
+              <div className="cart-heading">
+                <h3>Your Cart</h3>
+                <span>{cartCount}</span>
               </div>
-              <div className="product-info">
-                <span className="product-category">{product.category}</span>
-                <h2>{product.title}</h2>
-                <div className="product-meta">
-                  <strong>${product.price.toFixed(2)}</strong>
-                  <span><span aria-hidden="true">★</span> {product.rating.toFixed(1)}</span>
-                </div>
+
+              <div className="cart-items">
+                {cart.length === 0 ? (
+                  <p className="empty-cart">Your cart is empty</p>
+                ) : cart.map((item) => (
+                  <div className="cart-item" key={item.id}>
+                    <img src={item.thumbnail} alt="" />
+                    <div>
+                      <strong>{item.title}</strong>
+                      <span>${item.price.toFixed(2)}</span>
+                    </div>
+                    {item.quantity > 1 && <b>×{item.quantity}</b>}
+                  </div>
+                ))}
               </div>
-            </article>
-          ))}
-        </section>
-      )}
+
+              {cart.length > 0 && (
+                <>
+                  <div className="cart-total">
+                    <div><span>Total amount</span><strong>${total.toFixed(2)}</strong></div>
+                    <small>{cartCount} items</small>
+                  </div>
+                  <button className="clear-cart" type="button" onClick={() => setCart([])}>
+                    <span aria-hidden="true">Clear Cart</span>
+                  </button>
+           </>
+              )}
+            </aside>
+          </div>
+        )}
+      </section>
     </main>
   )
 }

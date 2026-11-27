@@ -13,15 +13,6 @@ function Home() {
             <Link className="text-button" to="/about">Learn about us <span>→</span></Link>
           </div>
         </div>
-        <div className="hero-art" aria-label="Featured shopping collection">
-          <div className="hero-circle"></div>
-          <div className="hero-card hero-card-main">
-            <span>Editor's pick</span>
-            <div className="product-illustration">✦</div>
-            <strong>Modern essentials</strong>
-          </div>
-          <div className="hero-card hero-card-small"><span>Premium</span><strong>Quality</strong></div>
-        </div>
       </section>
 
       <section className="feature-strip">

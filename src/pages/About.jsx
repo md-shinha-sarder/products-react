@@ -10,7 +10,6 @@ function About() {
       </section>
 
       <section className="about-content">
-        <div className="about-visual"><span>Our<br />story</span></div>
         <div className="about-copy">
           <span className="section-number">01 — OUR MISSION</span>
           <h2>Making better choices easier.</h2>
@@ -20,11 +19,6 @@ function About() {
         </div>
       </section>
 
-      <section className="values-section">
-        <div><span>01</span><h3>Thoughtful selection</h3><p>Every product is presented clearly, so you can decide with confidence.</p></div>
-        <div><span>02</span><h3>Simple experience</h3><p>Clean browsing and useful information, without unnecessary complexity.</p></div>
-        <div><span>03</span><h3>Made for everyday</h3><p>Practical finds for homes, wardrobes, beauty routines, and more.</p></div>
-      </section>
     </main>
   )
 }
