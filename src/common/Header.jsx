@@ -1,13 +1,13 @@
 import { NavLink, Link } from 'react-router-dom'
+import { FaShoppingCart } from 'react-icons/fa'
 import logo from '../assets/logo.png'
 
 function Header() {
   return (
     <header className="template-header">
       <div className="template-header-inner">
-        <Link className="template-brand" to="/">
-          <img className="template-logo" src={logo} alt="Shopy logo" />
-          <title>Shop</title>
+        <Link className="template-brand" to="/" aria-label="Shopy home">
+          <img className="template-logo" src={logo} alt="Shopy" />
         </Link>
 
         <nav className="template-nav" aria-label="Main navigation">
@@ -16,9 +16,9 @@ function Header() {
           <NavLink className="template-active-page" to="/products">Products</NavLink>
         </nav>
 
-        <div className="template-header-actions">
-          <Link className="template-quote" to="/products">Get a Quote</Link>
-        </div>
+        <Link className="template-quote" to="/products">
+          <FaShoppingCart aria-hidden="true" /> Shop now
+        </Link>
       </div>
     </header>
   )

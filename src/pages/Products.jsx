@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { FaRegTrashAlt, FaShoppingCart } from 'react-icons/fa'
 
 function Products() {
   const [products, setProducts] = useState([])
@@ -69,7 +70,8 @@ function Products() {
                       type="button"
                       onClick={() => addToCart(product)}
                     >
-                      {inCart ? 'Added to Cart' : 'Add to Cart'}
+                      <FaShoppingCart aria-hidden="true" />
+                      {inCart ? ' Added to Cart' : ' Add to Cart'}
                     </button>
                   </article>
                 )
@@ -104,9 +106,9 @@ function Products() {
                     <small>{cartCount} items</small>
                   </div>
                   <button className="clear-cart" type="button" onClick={() => setCart([])}>
-                    <span aria-hidden="true">Clear Cart</span>
+                    <FaRegTrashAlt aria-hidden="true" /> Clear Cart
                   </button>
-           </>
+                </>
               )}
             </aside>
           </div>
