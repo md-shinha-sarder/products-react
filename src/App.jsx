@@ -4,12 +4,11 @@ import Footer from './common/Footer'
 import Home from './pages/Home'
 import About from './pages/About'
 import Products from './pages/Products'
-import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="app-shell">
+      <div className="min-h-screen flex flex-col bg-[#f7f8f5]">
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />

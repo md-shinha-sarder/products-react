@@ -10,103 +10,194 @@ function Products() {
   useEffect(() => {
     fetch('https://dummyjson.com/products')
       .then((response) => {
-        if (!response.ok) throw new Error('Could not load products')
+        if (!response.ok) {
+          throw new Error('Could not load products')
+        }
         return response.json()
       })
-      .then((data) => setProducts(data.products))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
+      .then((data) => {
+        setProducts(data.products)
+      })
+      .catch((err) => {
+        setError(err.message)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [])
 
   const addToCart = (product) => {
-    setCart((current) => {
-      const existing = current.find((item) => item.id === product.id)
-      if (existing) {
-        return current.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
-        )
+    setCart((currentCart) => {
+      const foundItem = currentCart.find((item) => item.id === product.id)
+
+      if (foundItem) {
+        return currentCart.map((item) => {
+          if (item.id === product.id) {
+            return { ...item, quantity: item.quantity + 1 }
+          }
+          return item
+        })
       }
-      return [...current, { ...product, quantity: 1 }]
+
+      return [...currentCart, { ...product, quantity: 1 }]
     })
   }
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+  const clearCart = () => {
+    setCart([])
+  }
+
+  const total = cart.reduce((sum, item) => {
+    return sum + item.price * item.quantity
+  }, 0)
+
+  const cartCount = cart.reduce((sum, item) => {
+    return sum + item.quantity
+  }, 0)
 
   return (
-    <main className="store-page">
-      <section className="store-banner">
-        <div className="store-banner-inner">
-          <h1>Ecommerce Store</h1>
-          <p><span>Home</span> / <strong>Ecommerce Store</strong></p>
+    <main className="flex-1 bg-[#f7f8f5]">
+      <section className="h-[150px] sm:h-[190px] bg-[#245b43]">
+        <div className="max-w-[1180px] h-full mx-auto px-5 sm:px-6 flex flex-col justify-center">
+          <h1 className="mb-3 font-serif text-white text-[34px] sm:text-[42px]">
+            Ecommerce Store
+          </h1>
+          <p className="text-[#dbe7df]">
+            Home <span className="mx-2 text-[#f2c078]">/</span>
+            <strong className="text-[#f2c078]"> Ecommerce Store</strong>
+          </p>
         </div>
       </section>
 
-      <section className="store-content">
-        <h2 className="store-title">Ecommerce Store</h2>
+      <section className="max-w-[1180px] mx-auto px-4 sm:px-6 py-8 sm:py-10 pb-20">
+        <h2 className="mb-7 text-center font-serif text-[#183b2b] text-[32px] sm:text-[38px]">
+          Ecommerce Store
+        </h2>
 
-        {loading && <div className="store-status">Loading products...</div>}
-        {error && <div className="store-status store-error">{error}</div>}
+        {loading && (
+          <div className="min-h-[280px] grid place-items-center text-[#687267]">
+            Loading products...
+          </div>
+        )}
+
+        {error && (
+          <div className="min-h-[280px] grid place-items-center text-[#b64a38]">
+            {error}
+          </div>
+        )}
 
         {!loading && !error && (
-          <div className="store-layout">
-            <div className="store-grid" aria-label="Product list">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] items-start gap-5 sm:gap-6">
+            <div
+              className="grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-4 sm:gap-5"
+              aria-label="Product list"
+            >
               {products.map((product) => {
-                const inCart = cart.some((item) => item.id === product.id)
+                const cartItem = cart.find((item) => item.id === product.id)
+                const quantity = cartItem ? cartItem.quantity : 0
+
                 return (
-                  <article className="template-product-card" key={product.id}>
+                  <article
+                    className="min-w-0 rounded-xl border border-[#e3e7df] bg-white p-3 shadow-[0_4px_16px_rgba(24,59,43,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(24,59,43,0.10)]"
+                    key={product.id}
+                  >
                     <button
-                      className="template-product-image"
+                      className="h-[190px] sm:h-[180px] w-full grid place-items-center rounded-lg border-0 bg-[#f1f3ef] overflow-hidden cursor-pointer"
                       type="button"
                       onClick={() => addToCart(product)}
                       aria-label={`Add ${product.title} to cart`}
                     >
-                      <img src={product.thumbnail} alt={product.title} />
+                      <img
+                        className="w-full h-full object-contain p-2 transition duration-300 hover:scale-[1.04]"
+                        src={product.thumbnail}
+                        alt={product.title}
+                      />
                     </button>
-                    <h3>{product.title}</h3>
-                    <p className="template-product-price">${product.price.toFixed(2)}</p>
-                    <button
-                      className={inCart ? 'template-add-button template-added' : 'template-add-button'}
-                      type="button"
-                      onClick={() => addToCart(product)}
-                    >
-                      <FaShoppingCart aria-hidden="true" />
-                      {inCart ? ' Added to Cart' : ' Add to Cart'}
-                    </button>
+
+                    <div className="px-1 pt-3">
+                      <h3 className="h-[42px] text-[#183b2b] text-[15px] leading-[1.35] font-bold overflow-hidden">
+                        {product.title}
+                      </h3>
+                      <p className="mt-1 mb-3 text-[#d66a45] font-extrabold">
+                        ${product.price.toFixed(2)}
+                      </p>
+                      <button
+                        className={`h-11 w-full inline-flex items-center justify-center gap-2 rounded-md border font-extrabold transition ${quantity ? 'border-[#245b43] bg-[#245b43] text-white' : 'border-[#dfee4dc] bg-white text-[#245b43] hover:border-[#245b43] hover:bg-[#eef3ef]'}`}
+                        type="button"
+                        onClick={() => addToCart(product)}
+                      >
+                        <FaShoppingCart aria-hidden="true" />
+                        {quantity ? `Added · ${quantity}` : 'Add to Cart'}
+                      </button>
+                    </div>
                   </article>
                 )
               })}
             </div>
 
-            <aside className="cart-panel">
-              <div className="cart-heading">
-                <h3>Your Cart</h3>
-                <span>{cartCount}</span>
+            <aside className="rounded-[24px] border border-[#e3e7df] bg-white p-4 sm:p-5 shadow-[0_4px_16px_rgba(24,59,43,0.04)] lg:sticky lg:top-6">
+              <div className="flex items-center justify-between pb-4">
+                <h3 className="m-0 text-[#183b2b] text-xl font-bold">
+                  Your Cart
+                </h3>
+                <span className="min-w-10 h-10 grid place-items-center rounded-full bg-[#ffb64a] text-[#183b2b] text-sm font-bold">
+                  {cartCount}
+                </span>
               </div>
 
-              <div className="cart-items">
+              <div className="min-h-[150px] lg:min-h-[170px] py-1">
                 {cart.length === 0 ? (
-                  <p className="empty-cart">Your cart is empty</p>
-                ) : cart.map((item) => (
-                  <div className="cart-item" key={item.id}>
-                    <img src={item.thumbnail} alt="" />
-                    <div>
-                      <strong>{item.title}</strong>
-                      <span>${item.price.toFixed(2)}</span>
+                  <p className="h-[150px] m-0 grid place-items-center text-[#92988f]">
+                    Your cart is empty
+                  </p>
+                ) : (
+                  cart.map((item) => (
+                    <div
+                      className="min-h-[92px] grid grid-cols-[64px_minmax(0,1fr)] items-center gap-4 border-t border-[#edf0ea] py-4"
+                      key={item.id}
+                    >
+                      <img
+                        className="w-[64px] h-[64px] rounded-lg object-contain"
+                        src={item.thumbnail}
+                        alt={item.title}
+                      />
+
+                      <div className="min-w-0 flex flex-col">
+                        <strong className="text-[#183b2b] text-sm sm:text-base truncate">
+                          {item.title}
+                        </strong>
+                        <span className="mt-1 text-[#e79528] text-sm font-bold">
+                          ${item.price.toFixed(2)}
+                        </span>
+                      </div>
                     </div>
-                    {item.quantity > 1 && <b>×{item.quantity}</b>}
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
 
               {cart.length > 0 && (
                 <>
-                  <div className="cart-total">
-                    <div><span>Total amount</span><strong>${total.toFixed(2)}</strong></div>
-                    <small>{cartCount} items</small>
+                  <div className="mt-3 rounded-[18px] border-t-2 border-[#2f73c7] bg-[#183b2b] text-white p-5">
+                    <div className="flex items-end justify-between">
+                      <span className="text-sm text-[#69a9ff]">
+                        Total amount
+                      </span>
+                      <strong className="text-[32px] leading-none">
+                        ${total.toFixed(2)}
+                      </strong>
+                    </div>
+                    <small className="mt-3 block text-[#cbd7ff]">
+                      {cartCount} items
+                    </small>
                   </div>
-                  <button className="clear-cart" type="button" onClick={() => setCart([])}>
-                    <FaRegTrashAlt aria-hidden="true" /> Clear Cart
+
+                  <button
+                    className="mt-4 h-12 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-[#dfe4dc] bg-white text-[#183b2b] font-bold transition hover:border-[#d66a45] hover:text-[#d66a45]"
+                    type="button"
+                    onClick={clearCart}
+                  >
+                    <FaRegTrashAlt aria-hidden="true" />
+                    Clear Cart
                   </button>
                 </>
               )}
